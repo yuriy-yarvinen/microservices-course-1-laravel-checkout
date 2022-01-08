@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  checkout:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: checkout_db
+      DB_DATABASE: checkout_db
+      DB_USERNAME: root
+      DB_PASSWORD: strongr324!w.LdOOfword
+    command: 'php artisan serve --host=0.0.0.0'    
+    volumes:
+      - .:/var/www/app
+    ports:
+      - 8002:8000
+    depends_on:
+      - checkout_db
+    networks:
+      - checkout_app
+
+  checkout_db:
+    image: mysql:5.7.22
+    environment:
+      MYSQL_DATABASE: checkout_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: strongr324!w.LdOOfword
+      MYSQL_ROOT_PASSWORD: strongr324!w.LdOOfword
+    volumes:
+      - ./storage/dbdata:/var/lib/mysql
+    ports:
+      - 33069:3306
+    networks:
+      - checkout_app
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8101:80
+    environment:
+      - PMA_HOST=checkout_db
+    networks:
+      - checkout_app
+
+networks:
+  checkout_app: null
